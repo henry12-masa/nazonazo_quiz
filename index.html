@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>なぞなぞクイズ200問</title>
+
+<!-- Google AdSense -->
+<script async
+src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8398161859137802"
+crossorigin="anonymous"></script>
+
+<style>
+body{
+  margin:0;
+  font-family:"Yu Gothic",sans-serif;
+  background:#fff8e8;
+  color:#333;
+}
+
+header{
+  background:#f57c00;
+  color:white;
+  text-align:center;
+  padding:20px;
+}
+
+.layout{
+  display:grid;
+  grid-template-columns:180px 1fr 180px;
+  gap:20px;
+  max-width:1400px;
+  margin:20px auto;
+  padding:0 12px;
+}
+
+.ad{
+  background:white;
+  border-radius:12px;
+  padding:10px;
+  min-height:300px;
+  box-shadow:0 2px 10px rgba(0,0,0,.12);
+}
+
+main{
+  background:white;
+  border-radius:16px;
+  padding:24px;
+  box-shadow:0 4px 12px rgba(0,0,0,.15);
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-bottom:20px;
+}
+
+.status{
+  font-weight:bold;
+}
+
+select{
+  padding:10px;
+  border-radius:8px;
+  font-size:16px;
+}
+
+.question{
+  font-size:24px;
+  line-height:1.8;
+  margin-bottom:24px;
+  background:#fff1c7;
+  padding:18px;
+  border-radius:12px;
+}
+
+.choices{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+
+button{
+  border:none;
+  border-radius:12px;
+  padding:16px;
+  font-size:17px;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.choice-btn{
+  background:#ffe0a3;
+}
+
+.choice-btn:hover{
+  background:#ffc96b;
+}
+
+.correct{
+  background:#7bd389!important;
+}
+
+.wrong{
+  background:#ff8a80!important;
+}
+
+.result{
+  margin-top:20px;
+  text-align:center;
+  font-size:22px;
+  font-weight:bold;
+  min-height:36px;
+}
+
+.next-btn,
+.restart-btn,
+.start-btn{
+  margin-top:20px;
+  width:100%;
+  background:#f57c00;
+  color:white;
+}
+
+.final{
+  text-align:center;
+  font-size:28px;
+  line-height:1.8;
+}
+
+@media(max-width:900px){
+
+  .layout{
+    grid-template-columns:1fr;
+  }
+
+  .choices{
+    grid-template-columns:1fr;
+  }
+
+  .ad{
+    min-height:auto;
+  }
+
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>なぞなぞクイズ200問</h1>
+  <p>ジャンルがランダムに出題！20問チャレンジ！</p>
+</header>
+
+<div class="layout">
+
+  <!-- 左広告 -->
+  <aside class="ad">
+
+    <!-- チェス -->
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-8398161859137802"
+         data-ad-slot="5599163841"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+
+  </aside>
+
+  <main>
+
+    <div class="topbar">
+
+      <div>
+        問題数：
+        <select id="questionCount">
+          <option value="10">10問</option>
+          <option value="20" selected>20問</option>
+        </select>
+      </div>
+
+      <div class="status" id="status">
+        スタートしてください
+      </div>
+
+    </div>
+
+    <button class="start-btn" id="startBtn">
+      クイズ開始
+    </button>
+
+    <div id="quizArea" style="display:none;">
+
+      <div class="question" id="question"></div>
+
+      <div class="choices" id="choices"></div>
+
+      <div class="result" id="result"></div>
+
+      <button class="next-btn" id="nextBtn">
+        次の問題へ
+      </button>
+
+      <button class="restart-btn" id="restartBtn">
+        もう一度遊ぶ
+      </button>
+
+    </div>
+
+  </main>
+
+  <!-- 右広告 -->
+  <aside class="ad">
+
+    <!-- チェス -->
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-8398161859137802"
+         data-ad-slot="5599163841"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+
+  </aside>
+
+</div>
+
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+<script>
+
+// ===== 問題カテゴリ =====
+const categories = [
+
+  // 動物
+  [
+    {
+      question:"空を飛ばない鳥は？",
+      answer:"ニワトリ",
+      choices:["ハト","カラス","ニワトリ","スズメ"]
+    },
+    {
+      question:"逆立ちすると軽くなる動物は？",
+      answer:"イルカ",
+      choices:["イルカ","ゾウ","キリン","ライオン"]
+    }
+  ],
+
+  // 食べ物
+  [
+    {
+      question:"パンはパンでも食べられないパンは？",
+      answer:"フライパン",
+      choices:["あんパン","食パン","フライパン","メロンパン"]
+    },
+    {
+      question:"食べると安心するケーキは？",
+      answer:"ホットケーキ",
+      choices:["ショートケーキ","ホットケーキ","ロールケーキ","チーズケーキ"]
+    }
+  ],
+
+  // 学校
+  [
+    {
+      question:"学校にあるけど授業をしない先生は？",
+      answer:"校長先生",
+      choices:["数学の先生","校長先生","英語の先生","担任"]
+    },
+    {
+      question:"いつも道を教えてくれる板は？",
+      answer:"看板",
+      choices:["黒板","看板","鉄板","まな板"]
+    }
+  ],
+
+  // 物
+  [
+    {
+      question:"走っても進まないものは？",
+      answer:"時計",
+      choices:["車","時計","電車","自転車"]
+    },
+    {
+      question:"口はあるのに話せないものは？",
+      answer:"びん",
+      choices:["びん","人","犬","ロボット"]
+    }
+  ],
+
+  // 自然
+  [
+    {
+      question:"夜になると出てくるけど朝には消えるものは？",
+      answer:"星",
+      choices:["月","太陽","星","雨"]
+    },
+    {
+      question:"目はあるのに見えないものは？",
+      answer:"台風",
+      choices:["猫","魚","台風","犬"]
+    }
+  ],
+
+  // ひっかけ
+  [
+    {
+      question:"押しても引いても開かないドアは？",
+      answer:"自動ドア",
+      choices:["木のドア","鉄のドア","自動ドア","玄関ドア"]
+    },
+    {
+      question:"切っても切っても切れないものは？",
+      answer:"縁",
+      choices:["紙","糸","縁","野菜"]
+    }
+  ],
+
+  // 数字
+  [
+    {
+      question:"3人でケーキを分けると、1人2個ずつ。全部で何個？",
+      answer:"6個",
+      choices:["3個","5個","6個","8個"]
+    },
+    {
+      question:"1時間30分は何分？",
+      answer:"90分",
+      choices:["60分","80分","90分","100分"]
+    }
+  ],
+
+  // 文字遊び
+  [
+    {
+      question:"『き』を3回言うとできる食べ物は？",
+      answer:"ケーキ",
+      choices:["パン","ケーキ","寿司","ラーメン"]
+    },
+    {
+      question:"『ん』がつかない県は？",
+      answer:"三重県",
+      choices:["群馬県","長野県","三重県","神奈川県"]
+    }
+  ],
+
+  // 家
+  [
+    {
+      question:"お金を食べる箱は？",
+      answer:"貯金箱",
+      choices:["冷蔵庫","貯金箱","宝箱","段ボール"]
+    },
+    {
+      question:"耳はあるのに聞こえないものは？",
+      answer:"食パン",
+      choices:["犬","食パン","猫","人"]
+    }
+  ],
+
+  // その他
+  [
+    {
+      question:"いつもブーブー言ってる動物は？",
+      answer:"ブタ",
+      choices:["犬","猫","ブタ","馬"]
+    },
+    {
+      question:"頭に毛がないのに毛があると言われるものは？",
+      answer:"けむし",
+      choices:["机","石","けむし","時計"]
+    }
+  ]
+
+];
+
+// ===== 全カテゴリ結合 =====
+let baseQuestions = [];
+
+categories.forEach(category => {
+  baseQuestions = baseQuestions.concat(category);
+});
+
+// ===== 200問生成 =====
+const quizData = [];
+
+for(let i=1;i<=10;i++){
+
+  baseQuestions.forEach(q=>{
+
+    quizData.push({
+      question:`【${i}】${q.question}`,
+      answer:q.answer,
+      choices:[...q.choices]
+    });
+
+  });
+
+}
+
+// ===== シャッフル =====
+function shuffle(array){
+
+  return array.sort(()=>Math.random()-0.5);
+
+}
+
+let quizzes=[];
+let currentQuiz=0;
+let score=0;
+let answered=false;
+
+const startBtn=document.getElementById("startBtn");
+const quizArea=document.getElementById("quizArea");
+const questionEl=document.getElementById("question");
+const choicesEl=document.getElementById("choices");
+const resultEl=document.getElementById("result");
+const nextBtn=document.getElementById("nextBtn");
+const restartBtn=document.getElementById("restartBtn");
+const statusEl=document.getElementById("status");
+
+startBtn.onclick=()=>{
+
+  const count=
+    Number(document.getElementById("questionCount").value);
+
+  quizzes=
+    shuffle([...quizData]).slice(0,count);
+
+  currentQuiz=0;
+  score=0;
+
+  startBtn.style.display="none";
+
+  quizArea.style.display="block";
+
+  loadQuiz();
+
+};
+
+function loadQuiz(){
+
+  answered=false;
+
+  resultEl.textContent="";
+
+  nextBtn.style.display="none";
+
+  choicesEl.innerHTML="";
+
+  const quiz=quizzes[currentQuiz];
+
+  statusEl.textContent=
+    `第${currentQuiz+1}問 / ${quizzes.length}問 ｜ 正解 ${score}`;
+
+  questionEl.textContent=
+    quiz.question;
+
+  shuffle([...quiz.choices]).forEach(choice=>{
+
+    const btn=
+      document.createElement("button");
+
+    btn.textContent=choice;
+
+    btn.className="choice-btn";
+
+    btn.onclick=()=>checkAnswer(btn,choice);
+
+    choicesEl.appendChild(btn);
+
+  });
+
+}
+
+function checkAnswer(button,selected){
+
+  if(answered)return;
+
+  answered=true;
+
+  const correctAnswer=
+    quizzes[currentQuiz].answer;
+
+  const buttons=
+    choicesEl.querySelectorAll("button");
+
+  buttons.forEach(btn=>{
+
+    if(btn.textContent===correctAnswer){
+
+      btn.classList.add("correct");
+
+    }
+
+  });
+
+  if(selected===correctAnswer){
+
+    score++;
+
+    button.classList.add("correct");
+
+    resultEl.textContent="正解！";
+
+  }else{
+
+    button.classList.add("wrong");
+
+    resultEl.textContent=
+      `不正解！ 正解は「${correctAnswer}」`;
+
+  }
+
+  nextBtn.style.display="block";
+
+}
+
+nextBtn.onclick=()=>{
+
+  currentQuiz++;
+
+  if(currentQuiz<quizzes.length){
+
+    loadQuiz();
+
+  }else{
+
+    showFinal();
+
+  }
+
+};
+
+restartBtn.onclick=()=>{
+
+  location.reload();
+
+};
+
+function showFinal(){
+
+  const percent=
+    Math.round((score/quizzes.length)*100);
+
+  let rank="";
+
+  if(percent>=90){
+
+    rank="Sランク：なぞなぞ王！";
+
+  }else if(percent>=70){
+
+    rank="Aランク：かなりひらめく！";
+
+  }else if(percent>=50){
+
+    rank="Bランク：いい感じ！";
+
+  }else{
+
+    rank="Cランク：再挑戦しよう！";
+
+  }
+
+  questionEl.innerHTML=`
+    <div class="final">
+      クイズ終了！<br>
+      ${quizzes.length}問中 ${score}問正解！<br>
+      正答率：${percent}%<br><br>
+      ${rank}
+    </div>
+  `;
+
+  choicesEl.innerHTML="";
+
+  resultEl.textContent="";
+
+  nextBtn.style.display="none";
+
+  restartBtn.style.display="block";
+
+  statusEl.textContent="終了";
+
+}
+
+</script>
+
+</body>
+</html>
